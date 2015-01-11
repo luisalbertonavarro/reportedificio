@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <title>Cuentas Edificio</title> </head>
+    <body>
+    {% if user %}
+    <p>Bienvenido, {{ user.email() }}! Cierra tu sesion <a href="{{ logout_url }}">aqui</a>.</p>
+
+    {% if uploads %}
+    <form action="/delete" method="post"> <p>Your uploads:</p>
+    <ul>
+        {% for upload in uploads %}
+        <li>
+            <input type="checkbox" name="delete" value="{{ upload.key() }}" />
+            {{ upload.description }}:
+            <a href="/view?key={{ upload.key() }}">{{ upload.blob.filename }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    <input type="submit" value="Delete Selected" />
+    </form>
+    {% else %} {# User has no uploads. #}
+    <p>No existe ningun pago.</p>
+    {% endif %}
+
+    <p>Crear un pago:</p>
+    <form action="{{ upload_url }}" method="post" enctype="multipart/form-data">
+        <label for="emission_date">Fecha de Emision:</label>
+            <input type="text" name="emission_date" id="emission_date" /><br />
+        <label for="name">Nombre:</label>
+            <input type="text" name="name" id="name" /><br />
+        <label for="description">Descripcion:</label>
+            <input type="text" name="description" id="description" /><br />
+        <label for="amount">Cantidad:</label>
+            <input type="text" name="amount" id="amount" /><br />
+        <label for="payment_date">Fecha de Pago:</label>
+            <input type="text" name="payment_date" id="payment_date" /><br />
+        <label for="upload">Recibo:</label>
+            <input type="file" name="upload" id="upload" multiple="true" /><br />
+        <input type="submit" value="Cargar recibo" />
+    </form>
+
+    <p>Ingresos:</p>
+    <table>
+     <tr>
+         <th>ID</th>
+         <th>Fecha de Emision</th>
+         <th>Nombre</th>
+         <th>Descripcion</th>
+         <th>Cantidad</th>
+         <th>Fecha de Pago</th> 
+         <th>Recibo</th> 
+     <tr>  
+     {% for upload in uploads %}
+	 <td>12345</td>
+	 <td>{{upload.emission_date}}</td>
+	 <td>{{upload.name}}</td>
+	 <td>{{upload.description}}</td>
+	 <td>{{upload.amount}}</td>
+         <td>{{upload.payment_date}}</td>
+         <td><a href="/view?key={{ upload.key() }}">{{ upload.blob.filename }}</a></td>
+        </li>
+     </tr>
+     {% endfor %}
+     </table>
+
+    {% else %} {# User is not signed in. #}
+    <p>Bienvenido! Por favor
+    <a href="{{ login_url }}">inicie su sesion o registrese</a> para actualizar sus pagos.</p>
+
+    {% endif %}
+    </body>
+</html>
+
