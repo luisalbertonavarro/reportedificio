@@ -40,11 +40,9 @@ class MainPage(webapp2.RequestHandler):
         logout_url = users.create_logout_url(self.request.path)
 
         uploads = None
-        if user:
-            q = UserUpload.all()
-            q.filter('user =', user)
-            q.ancestor(db.Key.from_path('UserUploadGroup', user.email()))
-            uploads = q.fetch(100)
+	    q = db.Query()
+        q.ancestor(db.Key.from_path('UserUpload', 'UserUploadGroup'))
+        uploads = q.fetch(100)
 
         upload_url = blobstore.create_upload_url('/upload')
         
@@ -69,7 +67,7 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         payment_date = self.request.params['payment_date']
 
         for blob_info in self.get_uploads('upload'):
-            upload = UserUpload(parent=db.Key.from_path('UserUploadGroup', user.email()),
+            upload = UserUpload(parent=db.Key.from_path('UserUpload', 'UserUploadGroup'),
                                 user=user,
                                 emission_date=emission_date,
 				name=name,
@@ -97,16 +95,13 @@ class ViewHandler(blobstore_handlers.BlobstoreDownloadHandler):
 class DeleteHandler(webapp2.RequestHandler):
     def post(self):
         user = users.get_current_user()
-        if user:
-            entities_to_delete = []
-            for delete_key in self.request.params.getall('delete'):
-                upload = db.get(delete_key)
-                if upload.user != user:
-                    continue
-                entities_to_delete.append(upload.key())
-                entities_to_delete.append(db.Key.from_path('__BlobInfo__',
-                                          str(upload.blob.key())))
-                db.delete(entities_to_delete)
+        entities_to_delete = []
+        for delete_key in self.request.params.getall('delete'):
+          upload = db.get(delete_key)
+          entities_to_delete.append(upload.key())
+          entities_to_delete.append(db.Key.from_path('UserUpload',
+                                    'UserUploadGroup'))
+          db.delete(entities_to_delete)
         self.redirect('/')
 
 app = webapp2.WSGIApplication([
