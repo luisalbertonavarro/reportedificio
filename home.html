@@ -1,12 +1,12 @@
-<html>
-    <head>
-        <title>Cuentas Edificio</title> </head>
-    <body>
+{% extends "base.html" %}
+{% block bodycontent %}
     {% if user %}
+    <br>
     <p>Bienvenido, {{ user.email() }}! Cierra tu sesion <a href="{{ logout_url }}">aqui</a>.</p>
 
+   <h2>Borrar cuentas:</h2>
     {% if uploads %}
-    <form action="/delete" method="post"> <p>Your uploads:</p>
+    <form action="/delete" method="post"> 
     <ul>
         {% for upload in uploads %}
         <li>
@@ -22,25 +22,47 @@
     <p>No existe ningun pago.</p>
     {% endif %}
 
-    <p>Crear un pago:</p>
-    <form action="{{ upload_url }}" method="post" enctype="multipart/form-data">
-        <label for="emission_date">Fecha de Emision:</label>
-            <input type="text" name="emission_date" id="emission_date" /><br />
-        <label for="name">Nombre:</label>
-            <input type="text" name="name" id="name" /><br />
-        <label for="description">Descripcion:</label>
-            <input type="text" name="description" id="description" /><br />
-        <label for="amount">Cantidad:</label>
-            <input type="text" name="amount" id="amount" /><br />
-        <label for="payment_date">Fecha de Pago:</label>
-            <input type="text" name="payment_date" id="payment_date" /><br />
-        <label for="upload">Recibo:</label>
-            <input type="file" name="upload" id="upload" multiple="true" /><br />
+    <h2>Crear un pago:</h2>
+    <form action="{{ upload_url }}" method="post" enctype="multipart/form-data">i
+      <div class="form-group">
+        <label for="emission_date" class="col-sm-2 control-label">Fecha de Emision:</label>
+        <div class="col-sm-10">
+          <input type="date" name="emission_date" id="emission_date"/><br />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="name" class="col-sm-2 control-label">Nombre:</label>
+        <div class="col-sm-10">
+          <input type="text" name="name" id="name" /><br />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="description" class="col-sm-2 control-label">Descripcion:</label>
+        <div class="col-sm-10">
+         <input type="text" name="description" id="description" /><br />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="amount" class="col-sm-2 control-label">Cantidad:</label>
+        <div class="col-sm-10">
+         <input type="text" name="amount" id="amount" /><br />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="payment_date" class="col-sm-2 control-label">Fecha de Pago:</label>
+        <div class="col-sm-10">
+         <input type="date" name="payment_date" id="payment_date" /><br />
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="upload" class="col-sm-2 control-label">Recibo:</label> <br />
+        <input type="file" name="upload" id="upload" multiple="true" /><br />
         <input type="submit" value="Cargar recibo" />
+      </div>
     </form>
 
-    <p>Ingresos:</p>
-    <table>
+    <h2>Ingresos:</h2>
+    <table class="table">
      <tr>
          <th>ID</th>
          <th>Fecha de Emision</th>
@@ -63,11 +85,19 @@
      {% endfor %}
      </table>
 
+    </div>
+
     {% else %} {# User is not signed in. #}
-    <p>Bienvenido! Por favor
-    <a href="{{ login_url }}">inicie su sesion o registrese</a> para actualizar sus pagos.</p>
+    <div class="container">
+      <div class="starter-template">
+        <h1>Bienvenidos a ReportEdificio</h1>
+        <p class="lead">Por favor
+        <a href="{{ login_url }}">inicie su sesion o registrese</a> para actualizar sus pagos.</p>
+      </div>
+    </div><!-- /.container -->
 
     {% endif %}
-    </body>
-</html>
+{%endblock %}
+
+
 
