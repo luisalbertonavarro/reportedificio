@@ -1,12 +1,14 @@
-{% extends "base.html" %}
+{% extends "templates/base.htm" %}
 {% block bodycontent %}
     {% if user %}
+    <br>
+    <br>
     <br>
     <p>Bienvenido, {{ user.email() }}! Cierra tu sesion <a href="{{ logout_url }}">aqui</a>.</p>
 
    <h2>Borrar cuentas:</h2>
     {% if uploads %}
-    <form action="/delete" method="post"> 
+    <form action="/admin/delete" method="post"> 
     <ul>
         {% for upload in uploads %}
         <li>

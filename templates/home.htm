@@ -1,0 +1,45 @@
+{% extends "templates/base.htm" %}
+{% block bodycontent %}
+    {% if user %}
+    <br>
+    <p>Bienvenido, {{ user.email() }}! Cierra tu sesion <a href="{{ logout_url }}">aqui</a>.</p>
+    <h2>Ingresos:</h2>
+    <table class="table">
+     <tr>
+         <th>ID</th>
+         <th>Fecha de Emision</th>
+         <th>Nombre</th>
+         <th>Descripcion</th>
+         <th>Cantidad</th>
+         <th>Fecha de Pago</th> 
+         <th>Recibo</th> 
+     <tr>  
+     {% for upload in uploads %}
+	 <td>12345</td>
+	 <td>{{upload.emission_date}}</td>
+	 <td>{{upload.name}}</td>
+	 <td>{{upload.description}}</td>
+	 <td>{{upload.amount}}</td>
+         <td>{{upload.payment_date}}</td>
+         <td><a href="/view?key={{ upload.key() }}">{{ upload.blob.filename }}</a></td>
+        </li>
+     </tr>
+     {% endfor %}
+     </table>
+
+    </div>
+
+    {% else %} {# User is not signed in. #}
+    <div class="container">
+      <div class="starter-template">
+        <h1>Bienvenidos a ReportEdificio</h1>
+        <p class="lead">Por favor
+        <a href="{{ login_url }}">inicie su sesion o registrese</a> para actualizar sus pagos.</p>
+      </div>
+    </div><!-- /.container -->
+
+    {% endif %}
+{%endblock %}
+
+
+
