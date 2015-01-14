@@ -12,9 +12,7 @@
     <ul>
         {% for upload in uploads %}
         <li>
-            <input type="checkbox" name="delete" value="{{ upload.key() }}" />
-            {{ upload.description }}:
-            <a href="/view?key={{ upload.key() }}">{{ upload.blob.filename }}</a>
+            <input type="checkbox" name="delete" value="{{ upload.key() }}" /> {{ upload.name }}
         </li>
         {% endfor %}
     </ul>
@@ -25,7 +23,7 @@
     {% endif %}
 
     <h2>Crear un pago:</h2>
-    <form action="{{ upload_url }}" method="post" enctype="multipart/form-data">i
+    <form action="{{ upload_url }}" method="post" enctype="multipart/form-data">
       <div class="form-group">
         <label for="emission_date" class="col-sm-2 control-label">Fecha de Emision:</label>
         <div class="col-sm-10">

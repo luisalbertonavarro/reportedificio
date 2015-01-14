@@ -65,7 +65,8 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
         amount = self.request.params['amount']
         payment_date = self.request.params['payment_date']
 
-        for blob_info in self.get_uploads('upload'):
+        upload = None
+        if self.get_uploads('upload'):
             upload = UserUpload(parent=db.Key.from_path('UserUpload', 'UserUploadGroup'),
                                 user=user,
                                 emission_date=emission_date,
@@ -74,7 +75,16 @@ class UploadHandler(blobstore_handlers.BlobstoreUploadHandler):
 				                amount=amount,
 				                payment_date=payment_date,
                                 blob=blob_info.key())
-            upload.put()
+        else:
+           upload = UserUpload(parent=db.Key.from_path('UserUpload', 'UserUploadGroup'),
+                               user=user,
+                               emission_date=emission_date,
+                		       name=name,
+                               description=description,
+				               amount=amount,
+				               payment_date=payment_date)
+
+        upload.put()
         self.redirect('/admin/main')
 
 class ViewHandler(blobstore_handlers.BlobstoreDownloadHandler):
