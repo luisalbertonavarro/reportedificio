@@ -1,19 +1,3 @@
-#!/usr/bin/env python
-#
-# Copyright 2007 Google Inc.
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#
 import jinja2
 import os
 import webapp2
@@ -25,53 +9,52 @@ from google.appengine.ext.webapp import blobstore_handlers
 template_env = jinja2.Environment( loader=jinja2.FileSystemLoader(os.getcwd()))
 
 class UserUpload(db.Model):
-    user = db.UserProperty()
-    emission_date = db.StringProperty()
-    name = db.StringProperty()
-    description = db.StringProperty()
-    amount = db.StringProperty()
-    payment_date = db.StringProperty()
-    blob = blobstore.BlobReferenceProperty()
+  user = db.UserProperty()
+  emission_date = db.StringProperty()
+  name = db.StringProperty()
+  description = db.StringProperty()
+  amount = db.StringProperty()
+  payment_date = db.StringProperty()
+  blob = blobstore.BlobReferenceProperty()
 
 class MainPage(webapp2.RequestHandler):
-    def get(self):
-        user = users.get_current_user()
-        login_url = users.create_login_url(self.request.path)
-        logout_url = users.create_logout_url(self.request.path)
+  def get(self):
+    user = users.get_current_user()
+    login_url = users.create_login_url(self.request.path)
+    logout_url = users.create_logout_url(self.request.path)
 
-        uploads = None
-        q = db.Query()
-        q.ancestor(db.Key.from_path('UserUpload', 'UserUploadGroup'))
-        uploads = q.fetch(100)
+    uploads = None
+    q = db.Query()
+    q.ancestor(db.Key.from_path('UserUpload', 'UserUploadGroup'))
+    uploads = q.fetch(100)
 
-        upload_url = blobstore.create_upload_url('/upload')
-        template = template_env.get_template('templates/home.htm')
-        context = {
-            'user': user,
-            'login_url': login_url,
-            'logout_url': logout_url,
-            'uploads': uploads,
-            'upload_url': upload_url,
-        }
+    upload_url = blobstore.create_upload_url('/upload')
+    template = template_env.get_template('templates/home.htm')
+    context = {
+      'user': user,
+      'login_url': login_url,
+      'logout_url': logout_url,
+      'uploads': uploads,
+      'upload_url': upload_url,
+    }
 
-        self.response.write(template.render(context))
+    self.response.write(template.render(context))
 
 class ViewHandler(blobstore_handlers.BlobstoreDownloadHandler):
-    def get(self):
-        user = users.get_current_user()
-        upload_key_str = self.request.params.get('key')
-        upload = None
-        if upload_key_str:
-            upload = db.get(upload_key_str)
+  def get(self):
+    user = users.get_current_user()
+    upload_key_str = self.request.params.get('key')
+    upload = None
+    if upload_key_str:
+        upload = db.get(upload_key_str)
 
-        if (not user or not upload or upload.user != user):
-            self.error(404)
-            return
+    if (not user or not upload or upload.user != user):
+        self.error(404)
+        return
 
-        self.send_blob(upload.blob)
-
+    self.send_blob(upload.blob)
 
 app = webapp2.WSGIApplication([
-    ('/', MainPage),
-    ('/view', ViewHandler),
+  ('/', MainPage),
+  ('/view', ViewHandler),
 ], debug=True)
